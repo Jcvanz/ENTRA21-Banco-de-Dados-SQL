@@ -1,4 +1,4 @@
--- Active: 1700757653745@@127.0.0.1@3306@estoque
+-- Active: 1700521847292@@127.0.0.1@3306@estoque
 ## Criando o database
 CREATE DATABASE Estoque;
 
@@ -121,13 +121,18 @@ WHERE date_entry = '2023-11-19';
 SELECT id_produto, SUM(amount_product) as total_entradas
 FROM stock_entry GROUP BY id_produto;
 
-## 
+/* 
+    Mostrando a quantidade de estoque, após fazer o cálculo da quantidade de entrada menos a quantidade de saída e
+    fazendo o cálculo da quantidade que ainda tem em estoque vezes o valor de cada tênis
+*/
 SELECT
     tbprodutos.id_product,
     tbprodutos.product_name,
+    tbprodutos.unit_price,
     tbentradas.total_entrada,
-    tbsaidas.total_saida
-    (tbentradas.total_entrada) - (tbsaidas.total_saida) as saldo
+    tbsaidas.total_saida,
+    (tbentradas.total_entrada - tbsaidas.total_saida) as Quantidade_estoque,
+    ((tbentradas.total_entrada - tbsaidas.total_saida) * tbprodutos.unit_price) as valor_Estoque
     FROM estoque.products tbprodutos
 INNER JOIN (SELECT id_produto, SUM(qtnProduct_entry) as total_entrada
     FROM estoque.stock_entry
@@ -137,3 +142,26 @@ INNER JOIN (SELECT id_produto, SUM(qtnProduct_exits) as total_saida
     FROM estoque.stock_exits
     GROUP BY id_produto) tbsaidas
     ON tbprodutos.id_product = tbsaidas.id_produto;
+
+
+/* 
+    Identifique produtos com estoque abaixo de um nível mínimo.
+    Fazendo os cálculos para mostrar o total de entrada e de saída de cada produto.
+*/
+SELECT
+    tbprodutos.id_product,
+    tbprodutos.product_name,
+    tbentradas.total_entrada,
+    tbsaidas.total_saida,
+    (tbentradas.total_entrada - tbsaidas.total_saida) as Estoque_baixo
+FROM estoque.products tbprodutos
+INNER JOIN (SELECT id_produto, SUM(qtnProduct_entry) as total_entrada
+    FROM estoque.stock_entry
+    GROUP BY id_produto) tbentradas 
+    ON tbprodutos.id_product = tbentradas.id_produto
+INNER JOIN (SELECT id_produto, SUM(qtnProduct_exits) as total_saida
+    FROM estoque.stock_exits
+    GROUP BY id_produto) tbsaidas 
+    ON tbprodutos.id_product = tbsaidas.id_produto
+WHERE (tbentradas.total_entrada - tbsaidas.total_saida) < 5;
+
