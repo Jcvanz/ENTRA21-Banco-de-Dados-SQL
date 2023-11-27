@@ -1,4 +1,4 @@
--- Active: 1700521847292@@127.0.0.1@3306@estoque
+-- Active: 1700757653745@@127.0.0.1@3306
 ## Criando o database
 CREATE DATABASE Estoque;
 
@@ -100,7 +100,7 @@ SELECT * FROM stock_exits;
 
 ## Utilizando o UPDATE para alterar a quantidade de produtos
 UPDATE stock_exits
-SET amount_product = 2
+SET qtnProduct_exits = 2
 WHERE id_produto = 1;
 
 ## Deletando o último registro de saída
@@ -118,7 +118,7 @@ FROM stock_entry
 WHERE date_entry = '2023-11-19';
 
 ## Calcular o total de entradas de estoque de cada produto
-SELECT id_produto, SUM(amount_product) as total_entradas
+SELECT id_produto, SUM(qtnProduct_entry) as total_entradas
 FROM stock_entry GROUP BY id_produto;
 
 /* 
@@ -145,7 +145,7 @@ INNER JOIN (SELECT id_produto, SUM(qtnProduct_exits) as total_saida
 
 
 /* 
-    Identifique produtos com estoque abaixo de um nível mínimo.
+    Identifica produtos com estoque abaixo de um nível mínimo.
     Fazendo os cálculos para mostrar o total de entrada e de saída de cada produto.
 */
 SELECT
