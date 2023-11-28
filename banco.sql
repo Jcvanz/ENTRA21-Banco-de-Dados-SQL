@@ -1,4 +1,4 @@
--- Active: 1700757653745@@127.0.0.1@3306
+-- Active: 1700757653745@@127.0.0.1@3306@estoque
 ## Criando o database
 CREATE DATABASE Estoque;
 
